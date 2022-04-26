@@ -11,4 +11,10 @@ app = _fastapi.FastAPI()
 async def register_user(
     user: _schemas.UserRequest, db: _orm.Session = _fastapi.Depends(_services.get_db())
 ):
-    pass
+    # call to check if user with email exist
+    db_user = await _services.getUserByEmail(email = user.email, db = db)
+    # if user found throw exception
+    if db_user:
+        raise _fastapi.HTTPException(status_code=400, detail="Email already exist, try with another email!")
+
+    # create the user and return a token
