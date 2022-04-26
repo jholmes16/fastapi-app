@@ -3,7 +3,7 @@ import datetime as _datetime
 
 class UserBase(_pydantic.BaseModel):
     email: str
-    name: Str
+    name: str
     phone: str
 
 class UserRequest(UserBase):

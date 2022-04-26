@@ -31,13 +31,13 @@ async def create_user(user: _schemas.UserRequest, db: _orm.Session):
         raise _fastapi.HTTPException(status_code = 400, detail = "Provide valid Email")
 
     # convert normal password to hash form
-    hashed_password = hash.bcrypt.hash(user.password)
+    hashed_password = _hash.bcrypt.hash(user.password)
     # create the user model to be saved in database
-    user_obj = models.UserModel(
-        email = email,
-        name = user.name,
-        phone = user.phone,
-        password_hash = hashed_password
+    user_obj = _models.UserModel(
+        email=email,
+        name=user.name,
+        phone=user.phone,
+        password_hash=hashed_password
     )
     #save the user in the db
     db.add(user_obj)
@@ -47,7 +47,7 @@ async def create_user(user: _schemas.UserRequest, db: _orm.Session):
 
 async def create_token(user: _models.UserModel):
     # convert user model to schema
-    user_schema = _schemas.UserBase.from_orm(user)
+    user_schema = _schemas.UserResponse.from_orm(user)
 
     #convert obj to dictionary
     user_dict = user_schema.dict()

@@ -13,7 +13,7 @@ class UserModel(_database.Base):
     phone = _sqlalchemy.Column(_sqlalchemy.String)
     password_hash = _sqlalchemy.Column(_sqlalchemy.String)
     created_at = _sqlalchemy.Column(_sqlalchemy.DateTime, default=_datetime.datetime.utcnow())
-    posts = _orm.relationship("Post", back_populates="user")
+    posts = _orm.relationship("PostModel", back_populates="user")
 
     def password_verification(self, password: str):
         return _hash.bcrypt.verify(password, self.password_hash)
@@ -27,4 +27,4 @@ class PostModel(_database.Base):
     post_description = _sqlalchemy.Column(_sqlalchemy.String, index=True)
     image = _sqlalchemy.Column(_sqlalchemy.String)
     created_at = _sqlalchemy.Column(_sqlalchemy.DateTime, default=_datetime.datetime.utcnow())
-    user = _orm.relationship("User", back_populates="posts")
+    user = _orm.relationship("UserModel", back_populates="posts")
