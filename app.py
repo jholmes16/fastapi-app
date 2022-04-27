@@ -5,7 +5,7 @@ import sqlalchemy.orm as _orm
 import schemas as _schemas
 import services as _services
 
-app = _fastapi.FastAPI()
+app = _fastapi.FastAPI(title="Testing Api")
 
 @app.post("/api/v1/users")
 async def register_user(
