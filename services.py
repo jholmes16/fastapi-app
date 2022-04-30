@@ -1,5 +1,6 @@
 import database as _database
 import models as _models
+import fastapi.security as _security
 import sqlalchemy.orm as _orm
 import schemas as _schemas
 import email_validator as _email_validator
@@ -8,6 +9,7 @@ import passlib.hash as _hash
 import jwt as _jwt
 
 _JWT_SECRET = "testingsecretkey"
+oauth2schema = _security.OAuth2PasswordBearer("/api/v1/login")
 
 def create_db():
     return _database.Base.metadata.create_all(bind=_database.engine)
@@ -69,3 +71,14 @@ async def login(email: str, password: str, db: _orm.Session):
         return False
 
     return db_user
+
+async def current_user(db: _orm.Session = _fastapi.Depends(get_db), token: str = _fastapi.Depends(oauth2schema)):
+    try:
+        payload = _jwt.decode(token, _JWT_SECRET, algorithms=["HS256"])
+        #Get user by Id and Id is already available in the decoded user payload along with email, phone, and name
+        db_user = db.query(_models.UserModel).get(payload["id"])
+    except:
+        raise _fastapi.HTTPException(status_code=401, detail= "Wrong Credentials")
+
+    # if all okay then return the DTO/Schema version User
+    return _schemas.UserResponse.from_orm(db_user)
